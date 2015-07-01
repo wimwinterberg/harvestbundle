@@ -1,0 +1,17 @@
+{
+  "name": "wearebuilders/harvest-bundle",
+  "description": "Harvest bundle. Wrapper of gridonic/hapi",
+  "authors": [
+    {
+      "name": "Wim Winterberg",
+      "email": "wim@we.are.builders"
+    }
+  ],
+  "minimum-stability": "stable",
+  "require": {
+    "php": ">=5.4.0"
+  },
+  "autoload": {
+    "psr-4": { "WeAreBuilders\\HarvestBundle\\": "" }
+  }
+}
