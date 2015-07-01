@@ -9,13 +9,23 @@ namespace WeAreBuilders\HarvestBundle\Library\Harvest;
 class Project extends \Harvest\Model\Project
 {
     /**
-     * Retrieve property 'active'
+     * Whether project is active
      *
      * @return bool
      */
+    public function isActive()
+    {
+        return $this->getActive() == 'true';
+    }
+
+    /**
+     * Retrieve property 'active'
+     *
+     * @return string
+     */
     public function getActive()
     {
-        return $this->get('active') == 'true';
+        return $this->get('active');
     }
 
     /**
@@ -266,5 +276,15 @@ class Project extends \Harvest\Model\Project
     public function getNotes()
     {
         return $this->get('notes');
+    }
+
+    /**
+     * Dump
+     *
+     * @return array
+     */
+    public function dump()
+    {
+        return $this->_values;
     }
 }

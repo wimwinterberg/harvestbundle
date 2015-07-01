@@ -2,7 +2,6 @@
 namespace WeAreBuilders\HarvestBundle\Services;
 
 use Harvest\Model\Client;
-use Harvest\Model\Project;
 use Harvest\Model\Range;
 use \WeAreBuilders\HarvestBundle\Library;
 
@@ -134,7 +133,7 @@ class Harvest
      * Retrieve all users
      *
      * @param bool $forceReload (Optional) defaults to false - when true will reload via api
-     * @return mixed
+     * @return Library\Harvest\User[]
      * @throws \Exception
      */
     public function getActiveUsers($forceReload = false)
@@ -565,5 +564,31 @@ class Harvest
         }
 
         return $clientId;
+    }
+
+    /**
+     * Get all entries from harvest for the user in the given timeframe
+     *
+     * @param int $harvestUserRef
+     * @param int $startDate (yyyymmdd)
+     * @param int $endDate   (yyyymmdd)
+     * @param int $user_id   (optional)
+     * @return Library\Harvest\DayEntry[]
+     * @throws \Exception if entries could not be loaded from Harvest
+     */
+    public function getTrackedTimeByUser($harvestUserRef, $startDate, $endDate, $user_id = null)
+    {
+        $range = new Range($startDate, $endDate);
+
+        $this->init();
+        $result = $this->harvestConnection->getUserEntries($harvestUserRef, $range, $user_id);
+        if ($result->isSuccess()) {
+            // get taskAssignment id
+            $dayEntries = $result->get('data');
+        } else {
+            throw new \Exception("Harvest could not load the entries for this user");
+        }
+
+        return $dayEntries;
     }
 }

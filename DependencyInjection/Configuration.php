@@ -18,7 +18,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('we_are_builders_harvest');
+        $rootNode = $treeBuilder->root('harvest');
 
         $rootNode
             ->children()
@@ -27,7 +27,7 @@ class Configuration implements ConfigurationInterface
             ->scalarNode('account')->isRequired()->cannotBeEmpty()->end()
             ->end()
         ;
-        
+
         return $treeBuilder;
     }
 }

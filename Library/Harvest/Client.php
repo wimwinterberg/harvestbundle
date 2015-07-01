@@ -1,13 +1,15 @@
 <?php
 namespace WeAreBuilders\HarvestBundle\Library\Harvest;
 
+use Harvest\Model\Client as BaseClient;
+
 /**
  * Client
  *
  * Introduced getters
  *
  */
-class Client extends \Harvest\Model\Client
+class Client extends BaseClient
 {
     /**
      * Retrieve property 'id'
@@ -27,6 +29,16 @@ class Client extends \Harvest\Model\Client
     public function getName()
     {
         return $this->get('name');
+    }
+
+    /**
+     * Whether project is active
+     *
+     * @return bool
+     */
+    public function isActive()
+    {
+        return $this->getActive() == 'true';
     }
 
     /**
@@ -127,5 +139,15 @@ class Client extends \Harvest\Model\Client
     public function getLastInvoiceKind()
     {
         return $this->get('last-invoice-kind');
+    }
+
+    /**
+     * Dump
+     *
+     * @return array
+     */
+    public function dump()
+    {
+        return $this->_values;
     }
 }

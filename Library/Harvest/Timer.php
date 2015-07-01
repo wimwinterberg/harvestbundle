@@ -2,13 +2,13 @@
 namespace WeAreBuilders\HarvestBundle\Library\Harvest;
 
     /**
- * Timer
- *
- * This file contains the class Sef_Harvest_Timer
- *
- * @author  Matthew John Denton <matt@mdbitz.com>
- * @package com.mdbitz.harvest
- */
+     * Timer
+     *
+     * This file contains the class Sef_Harvest_Timer
+     *
+     * @author  Matthew John Denton <matt@mdbitz.com>
+     * @package com.mdbitz.harvest
+     */
 
 /**
  * Harvest Timer Object
@@ -54,5 +54,15 @@ class Timer extends \Harvest\Model\Timer
     public function getDayEntry()
     {
         return $this->_dayEntry;
+    }
+
+    /**
+     * Dump
+     *
+     * @return array
+     */
+    public function dump()
+    {
+        return $this->_values;
     }
 }

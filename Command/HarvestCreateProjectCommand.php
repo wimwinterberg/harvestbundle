@@ -13,7 +13,7 @@ use Symfony\Component\Console\Question\Question;
 use WeAreBuilders\HarvestBundle\Services\Harvest;
 
 /**
- * Class HarvestCreateProjectCommand
+ * Class HarvestDumpDayEntriesCommand
  *
  * @package WeAreBuilders\AutomateBundle\Command
  */

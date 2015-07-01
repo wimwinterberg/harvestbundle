@@ -1,11 +1,13 @@
 <?php
 namespace WeAreBuilders\HarvestBundle\Library\Harvest;
 
+use Harvest\HarvestAPI as BaseHarvestApi;
+
 /**
  * Class Sef_Harvest_Api
  *
  */
-class HarvestApi extends \Harvest\HarvestApi
+class HarvestApi extends BaseHarvestApi
 {
     /**
      * gets the activity of the requesting user for the day
@@ -119,6 +121,9 @@ class HarvestApi extends \Harvest\HarvestApi
                 break;
             case "client":
                 $item = new Client();
+                break;
+            case 'user':
+                $item = new User();
                 break;
             default:
                 break;

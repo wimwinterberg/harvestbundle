@@ -117,4 +117,14 @@ class Task extends \Harvest\Model\Task
     {
         return new \DateTime($this->get('updated-at'));
     }
+
+    /**
+     * Dump
+     *
+     * @return array
+     */
+    public function dump()
+    {
+        return $this->_values;
+    }
 }

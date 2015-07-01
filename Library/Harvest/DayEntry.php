@@ -177,4 +177,14 @@ class DayEntry extends \Harvest\Model\DayEntry
     {
         return $this->get('hours-with-timer');
     }
+
+    /**
+     * Dump
+     *
+     * @return array
+     */
+    public function dump()
+    {
+        return $this->_values;
+    }
 }

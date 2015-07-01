@@ -5,17 +5,17 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="we_are_builders_harvest.service.class">WeAreBuilders\HarvestBundle\Services\Harvest</parameter>
-        <parameter key="we_are_builders_harvest.user">null</parameter>
-        <parameter key="we_are_builders_harvest.password">null</parameter>
-        <parameter key="we_are_builders_harvest.account">null</parameter>
+        <parameter key="harvest.service.class">WeAreBuilders\HarvestBundle\Services\Harvest</parameter>
+        <parameter key="harvest.user">null</parameter>
+        <parameter key="harvest.password">null</parameter>
+        <parameter key="harvest.account">null</parameter>
     </parameters>
 
     <services>
-        <service id="wrb_harvest" class="%we_are_builders_harvest.service.class%">
-            <argument key="user">%we_are_builders_harvest.user%</argument>
-            <argument key="password">%we_are_builders_harvest.password%</argument>
-            <argument key="account">%we_are_builders_harvest.account%</argument>
+        <service id="wrb_harvest" class="%harvest.service.class%">
+            <argument key="user">%harvest.user%</argument>
+            <argument key="password">%harvest.password%</argument>
+            <argument key="account">%harvest.account%</argument>
         </service>
     </services>
 </container>

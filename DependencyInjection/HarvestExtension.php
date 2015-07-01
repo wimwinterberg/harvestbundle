@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
  *
  * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html}
  */
-class WeAreBuildersHarvestExtension extends Extension
+class HarvestExtension extends Extension
 {
     /**
      * {@inheritDoc}

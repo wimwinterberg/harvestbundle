@@ -98,4 +98,14 @@ class TaskAssignment extends \Harvest\Model\TaskAssignment
     {
         return $this->getDeactivated() == 'true';
     }
+
+    /**
+     * Dump
+     *
+     * @return array
+     */
+    public function dump()
+    {
+        return $this->_values;
+    }
 }
