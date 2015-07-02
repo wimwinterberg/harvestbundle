@@ -394,7 +394,7 @@ class Harvest
      * @param int $harvestProjectRef
      * @return Library\Harvest\TaskAssignment[]|null
      */
-    public function getTasksByProject($harvestProjectRef)
+    public function getTaskAssignmentsByProject($harvestProjectRef)
     {
         $this->init();
 
@@ -590,5 +590,56 @@ class Harvest
         }
 
         return $dayEntries;
+    }
+
+    /**
+     * Get a list of all tasks
+     *
+     *
+     * @throws \Exception
+     * @return Library\Harvest\Task[]
+     */
+    public function getTasks()
+    {
+        $retValue = null;
+
+        $this->init();
+
+        $result = $this->harvestConnection->getTasks();
+
+        if ($result->isSuccess() && $result->get('code') == 200) {
+            $retValue = $result->get('data');
+        } else {
+            throw new \Exception("Harvest could not retrieve tasks");
+        }
+
+        return $retValue;
+    }
+
+    /**
+     * Starts a new timer
+     *
+     * @param int    $userId
+     * @param int    $projectId
+     * @param int    $taskId
+     * @param string $comments
+     * @return mixed|null
+     * @throws \Exception
+     */
+    public function startNewTimerForUserByHarvestTaskInterface($userId, $projectId, $taskId, $comments)
+    {
+        $retValue = null;
+
+        $this->init();
+
+        $result = $this->harvestConnection->startNewTimerByUserIdAndProjectIdAndTaskId($userId, $projectId, $taskId, $comments);
+
+        if ($result->isSuccess()) {
+            $retValue = $result->get('data');
+        } else {
+            throw new \Exception("Harvest could not start new timer");
+        }
+
+        return $retValue;
     }
 }

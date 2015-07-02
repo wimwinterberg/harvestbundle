@@ -7,28 +7,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
-use WeAreBuilders\HarvestBundle\Services\Harvest;
 
 /**
  * Class HarvestDumpDayEntriesCommand
  *
  * @package WeAreBuilders\AutomateBundle\Command
  */
-class HarvestDumpDayEntriesCommand extends ContainerAwareCommand
+class HarvestDumpDayEntriesCommand extends HarvestCommandAbstract
 {
-    /**
-     * Options
-     *
-     */
-    const OPTION_FORCE_RELOAD = 'force-reload';
-
-    /**
-     * Cache namespace
-     *
-     * @var string
-     */
-    protected static $cacheNamespace = 'harvest.cache';
-
     /**
      * Cache data key
      *
@@ -50,16 +36,6 @@ class HarvestDumpDayEntriesCommand extends ContainerAwareCommand
     }
 
     /**
-     * Retrieve harvest api interface
-     *
-     * @return Harvest
-     */
-    protected function getWrbHarvest()
-    {
-        return $this->getContainer()->get('wrb_harvest');
-    }
-
-    /**
      * Executes the current command.
      *
      * @param InputInterface  $input  An InputInterface instance
@@ -76,84 +52,6 @@ class HarvestDumpDayEntriesCommand extends ContainerAwareCommand
         $output->writeln(json_encode($dayEntries, JSON_PRETTY_PRINT));
 
         return 0;
-    }
-
-    /**
-     * Retrieve projects
-     *
-     * @param bool $forceReload (Optional) Defaults to false
-     * @return array
-     * @throws \Exception
-     */
-    public function getProjects($forceReload = false)
-    {
-        $cache        = $this->getCache();
-        $cacheDataKey = 'projects';
-
-        // retrieve cached retValue
-        $retValue = $cache->fetch($cacheDataKey);
-
-        if ($retValue === false || $forceReload) {
-            $retValue = array();
-            foreach ($this->getWrbHarvest()->getProjects() as $project) {
-                $retValue[$project->getId()] = $project->dump();
-            }
-            $cache->save($cacheDataKey, $retValue, 3600); // 1 day
-        }
-
-        return $retValue;
-    }
-
-    /**
-     * Retrieve clients
-     *
-     * @param bool $forceReload (Optional) Defaults to false
-     * @return array
-     * @throws \Exception
-     */
-    public function getClients($forceReload = false)
-    {
-        $cache        = $this->getCache();
-        $cacheDataKey = 'clients';
-
-        // retrieve cached retValue
-        $retValue = $cache->fetch($cacheDataKey);
-
-        if ($retValue === false || $forceReload) {
-            $retValue = array();
-            foreach ($this->getWrbHarvest()->getClients() as $client) {
-                $retValue[$client->getId()] = $client->dump();
-            }
-            $cache->save($cacheDataKey, $retValue, 3600); // 1 day
-        }
-
-        return $retValue;
-    }
-
-    /**
-     * Retrieve users
-     *
-     * @param bool $forceReload (Optional) Defaults to false
-     * @return array
-     * @throws \Exception
-     */
-    public function getUsers($forceReload = false)
-    {
-        $cache        = $this->getCache();
-        $cacheDataKey = 'users';
-
-        // retrieve cached retValue
-        $retValue = $cache->fetch($cacheDataKey);
-
-        if ($retValue === false || $forceReload) {
-            $retValue = array();
-            foreach ($this->getWrbHarvest()->getActiveUsers() as $user) {
-                $retValue[$user->getId()] = $user->dump();
-            }
-            $cache->save($cacheDataKey, $retValue, 3600); // 1 day
-        }
-
-        return $retValue;
     }
 
     /**
@@ -188,7 +86,7 @@ class HarvestDumpDayEntriesCommand extends ContainerAwareCommand
             array(
                 'startDateTime' => new \DateTime(),
                 'cacheDataKey'  => self::$cacheDataKeyPrefix . '_daily',
-                'ttl'           => 1, // 1minute
+                'ttl'           => 60, // 1minute
             ),
         );
 
@@ -207,6 +105,12 @@ class HarvestDumpDayEntriesCommand extends ContainerAwareCommand
                     $dayEntries = $this->getWrbHarvest()->getTrackedTimeByUser($user['id'], $startDate, $endDate);
 
                     foreach ($dayEntries as $dayEntry) {
+
+                        // force projects reload when day entry is registered for unknown project
+                        if (!isset($projects[$dayEntry->getProjectId()])) {
+                            $projects = $this->getProjects(true);
+                        }
+
                         $project = $projects[$dayEntry->getProjectId()];
                         $client  = $clients[$project['client-id']];
 
@@ -230,20 +134,6 @@ class HarvestDumpDayEntriesCommand extends ContainerAwareCommand
                 break; // large period has already be refreshed
             }
         }
-
-        return $retValue;
-    }
-
-    /**
-     * Retrieve cache
-     *
-     * @return CacheProvider
-     */
-    protected function getCache()
-    {
-        $retValue = $this->getContainer()->get('cache');
-        /* @var $retValue CacheProvider */
-        $retValue->setNamespace(self::$cacheNamespace);
 
         return $retValue;
     }
