@@ -115,7 +115,13 @@ class Project extends \Harvest\Model\Project
      */
     public function getClientId()
     {
-        return $this->get('client-id');
+        $retValue = $this->get('client-id');
+
+        if ($retValue !== null) {
+            $retValue = (int)$retValue;
+        }
+
+        return $retValue;
     }
 
     /**
@@ -195,7 +201,13 @@ class Project extends \Harvest\Model\Project
      */
     public function getId()
     {
-        return $this->get('id');
+        $retValue = $this->get('id');
+
+        if ($retValue !== null) {
+            $retValue = (int)$retValue;
+        }
+
+        return $retValue;
     }
 
     /**

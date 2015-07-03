@@ -18,7 +18,13 @@ class Client extends BaseClient
      */
     public function getId()
     {
-        return $this->get('id');
+        $retValue = $this->get('id');
+
+        if ($retValue !== null) {
+            $retValue = (int)$retValue;
+        }
+
+        return $retValue;
     }
 
     /**

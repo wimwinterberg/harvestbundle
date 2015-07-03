@@ -31,11 +31,17 @@ class DayEntry extends \Harvest\Model\DayEntry
     /**
      * Retrieve property 'hours'
      *
-     * @return string
+     * @return float|null
      */
     public function getHours()
     {
-        return $this->get('hours');
+        $retValue = $this->get('hours');
+
+        if ($retValue !== null) {
+            $retValue = (float)$retValue;
+        }
+
+        return $retValue;
     }
 
     /**
@@ -45,7 +51,13 @@ class DayEntry extends \Harvest\Model\DayEntry
      */
     public function getId()
     {
-        return $this->get('id');
+        $retValue = $this->get('id');
+
+        if ($retValue !== null) {
+            $retValue = (int)$retValue;
+        }
+
+        return $retValue;
     }
 
     /**
@@ -85,7 +97,13 @@ class DayEntry extends \Harvest\Model\DayEntry
      */
     public function getProjectId()
     {
-        return $this->get('project-id');
+        $retValue = $this->get('project-id');
+
+        if ($retValue !== null) {
+            $retValue = (int)$retValue;
+        }
+
+        return $retValue;
     }
 
     /**
@@ -105,7 +123,13 @@ class DayEntry extends \Harvest\Model\DayEntry
      */
     public function getTaskId()
     {
-        return $this->get('task-id');
+        $retValue = $this->get('task-id');
+
+        if ($retValue !== null) {
+            $retValue = (int)$retValue;
+        }
+
+        return $retValue;
     }
 
     /**
@@ -125,7 +149,13 @@ class DayEntry extends \Harvest\Model\DayEntry
      */
     public function getUserId()
     {
-        return $this->get('user-id');
+        $retValue = $this->get('user-id');
+
+        if ($retValue !== null) {
+            $retValue = (int)$retValue;
+        }
+
+        return $retValue;
     }
 
     /**
@@ -171,11 +201,27 @@ class DayEntry extends \Harvest\Model\DayEntry
     /**
      * Retrieve property 'hours-with-timer'
      *
-     * @return string
+     * @return float|null
      */
     public function getHoursWithTimer()
     {
-        return $this->get('hours-with-timer');
+        $retValue = $this->get('hours-with-timer');
+
+        if ($retValue !== null) {
+            $retValue = (float)$retValue;
+        }
+
+        return $retValue;
+    }
+
+    /**
+     * Whether timer is running
+     *
+     * @return bool
+     */
+    public function isRunning()
+    {
+        return $this->getHoursWithTimer() !== null;
     }
 
     /**

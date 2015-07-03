@@ -3,7 +3,7 @@ namespace WeAreBuilders\HarvestBundle\Services;
 
 use Harvest\Model\Client;
 use Harvest\Model\Range;
-use \WeAreBuilders\HarvestBundle\Library;
+use WeAreBuilders\HarvestBundle\Library;
 
 /**
  * HarvestInterface - interface with harvest
@@ -153,7 +153,7 @@ class Harvest
                     }
                 }
             } else {
-                throw new \Exception("Harvest could not retrieve projects");
+                throw new \Exception("Harvest could not retrieve users");
             }
 
             $this->activeUsers = $retValue;
@@ -629,15 +629,43 @@ class Harvest
     public function startNewTimerForUserByHarvestTaskInterface($userId, $projectId, $taskId, $comments)
     {
         $retValue = null;
-
         $this->init();
-
         $result = $this->harvestConnection->startNewTimerByUserIdAndProjectIdAndTaskId($userId, $projectId, $taskId, $comments);
-
         if ($result->isSuccess()) {
             $retValue = $result->get('data');
         } else {
             throw new \Exception("Harvest could not start new timer");
+        }
+
+        return $retValue;
+    }
+
+    /**
+     * Stops the running timer
+     *
+     * @param \WeAreBuilders\HarvestBundle\Library\Harvest\DayEntry $dayEntry
+     * @return Library\Harvest\DayEntry
+     * @throws \Harvest\Exception\HarvestException
+     */
+    public function stopTimerByDayEntry(Library\Harvest\DayEntry $dayEntry)
+    {
+        $retValue = $dayEntry;
+
+        // init interface
+        $this->init();
+
+        $result = $this->harvestConnection->toggleTimerByDayEntryIdAndHarvestUserId($dayEntry->getId(), $dayEntry->getUserId());
+        if ($result->isSuccess()) {
+            $harvestTimer = $result->get('data');
+            /* @var $harvestTimer Library\Harvest\Timer */
+
+            $retValue = $harvestTimer->getDayEntry();
+
+            if ($retValue->isRunning()) {
+                // timer was started instead of stopped
+                // recall myself with new added timer
+                $retValue = $this->stopTimerByDayEntry($retValue);
+            }
         }
 
         return $retValue;

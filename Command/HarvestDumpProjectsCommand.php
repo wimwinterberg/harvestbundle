@@ -9,11 +9,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
 /**
- * Class HarvestDumpClientsCommand
+ * Class HarvestDumpProjectsCommand
  *
  * @package WeAreBuilders\AutomateBundle\Command
  */
-class HarvestDumpClientsCommand extends HarvestCommandAbstract
+class HarvestDumpProjectsCommand extends HarvestCommandAbstract
 {
     /**
      * Configures the current command.
@@ -23,8 +23,8 @@ class HarvestDumpClientsCommand extends HarvestCommandAbstract
     {
         parent::configure();
 
-        $this->setName('harvest:clients:dump')
-             ->setDescription('Dump clients available in harvest')
+        $this->setName('harvest:projects:dump')
+             ->setDescription('Dump projects available in harvest')
              ->addOption(self::OPTION_FORCE_RELOAD, 'f', InputOption::VALUE_NONE, 'force reload');
     }
 
@@ -41,7 +41,7 @@ class HarvestDumpClientsCommand extends HarvestCommandAbstract
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $entries = $this->getClients($input->getOption(self::OPTION_FORCE_RELOAD));
+        $entries = $this->getProjects($input->getOption(self::OPTION_FORCE_RELOAD));
         $output->writeln(json_encode($entries, JSON_PRETTY_PRINT));
 
         return 0;
@@ -50,8 +50,8 @@ class HarvestDumpClientsCommand extends HarvestCommandAbstract
     /**
      * @inheritdoc
      */
-    public function getClients($forceReload = false)
+    public function getProjects($forceReload = false)
     {
-        return parent::getClients($forceReload);
+        return parent::getProjects($forceReload);
     }
 }

@@ -23,6 +23,21 @@ class HarvestDumpDayEntriesCommand extends HarvestCommandAbstract
     protected static $cacheDataKeyPrefix = 'dayentries_';
 
     /**
+     * Cache data key for running timers
+     *
+     * @var string
+     */
+    protected static $cacheDataKeyRunningTimers = 'dayentries_running';
+
+    /**
+     * When day entries are refreshed, this array is used for day entries which are still running
+     * This value is cached but directly available so when getRunningDayEntries is called fresh cache might not be available yet, so this value is then used
+     *
+     * @var array
+     */
+    protected $runningTimers = null;
+
+    /**
      * Configures the current command.
      *
      */
@@ -52,6 +67,32 @@ class HarvestDumpDayEntriesCommand extends HarvestCommandAbstract
         $output->writeln(json_encode($dayEntries, JSON_PRETTY_PRINT));
 
         return 0;
+    }
+
+    /**
+     * Retrieve day entries
+     *
+     * @param bool $forceReload (Optional) Defaults to false
+     *
+     * @return array
+     */
+    public function getRunningDayEntries($forceReload = false)
+    {
+        $cache    = $this->getCache();
+        $retValue = $cache->fetch(self::$cacheDataKeyRunningTimers);
+
+        if ($retValue == false || $forceReload) {
+            $this->getDayEntries($forceReload);
+            $retValue = array();
+
+            // new cache is not available yet
+            // - check if runningTimers has been set
+            if ($this->runningTimers !== null) {
+                $retValue = $this->runningTimers;
+            }
+        }
+
+        return $retValue;
     }
 
     /**
@@ -95,6 +136,10 @@ class HarvestDumpDayEntriesCommand extends HarvestCommandAbstract
             $data        = $cache->fetch($config['cacheDataKey']);
 
             if ($data == false || $forceReload) {
+                if ($this->runningTimers === null) {
+                    $this->runningTimers = array();
+                }
+
                 $data          = array();
                 $startDateTime = $config['startDateTime'];
                 /* @var $startDateTime \DateTime */
@@ -117,10 +162,15 @@ class HarvestDumpDayEntriesCommand extends HarvestCommandAbstract
                         $data[$dayEntry->getId()] = $dayEntry->dump();
 
                         // add additional data
-                        $data[$dayEntry->getId()]['client-id']    = $client['id'];
-                        $data[$dayEntry->getId()]['client-name']  = $client['name'];
-                        $data[$dayEntry->getId()]['project-name'] = $project['name'];
-                        $data[$dayEntry->getId()]['user-email']   = $user['email'];
+                        $data[$dayEntry->getId()]['client-id']      = $client['id'];
+                        $data[$dayEntry->getId()]['client-name']    = $client['name'];
+                        $data[$dayEntry->getId()]['project-name']   = $project['name'];
+                        $data[$dayEntry->getId()]['user-email']     = $user['email'];
+                        $data[$dayEntry->getId()]['user-full-name'] = $user['first-name'] . ' ' . $user['last-name'];
+
+                        if ($dayEntry->isRunning()) {
+                            $this->runningTimers[$dayEntry->getId()] = $data[$dayEntry->getId()];
+                        }
                     }
                 }
 
@@ -131,6 +181,10 @@ class HarvestDumpDayEntriesCommand extends HarvestCommandAbstract
             $retValue += $data;
 
             if ($isRefreshed) {
+
+                // save running timers to cache
+                $cache->save(self::$cacheDataKeyRunningTimers, $this->runningTimers, 60);
+
                 break; // large period has already be refreshed
             }
         }
