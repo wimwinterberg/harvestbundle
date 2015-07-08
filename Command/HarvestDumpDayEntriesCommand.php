@@ -191,4 +191,15 @@ class HarvestDumpDayEntriesCommand extends HarvestCommandAbstract
 
         return $retValue;
     }
+
+    /**
+     * Invalidate running timers cache
+     *
+     */
+    public function invalidateRunningTimersCache()
+    {
+        $cache = $this->getCache();
+        $cache->delete(self::$cacheDataKeyRunningTimers);
+        $cache->delete(self::$cacheDataKeyPrefix . '_daily');
+    }
 }
