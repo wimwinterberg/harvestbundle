@@ -86,9 +86,10 @@ class HarvestDumpTasksPerProjectCommand extends HarvestCommandAbstract
                 }
 
                 $retValue[$project['client-id']]['projects'][$project['id']] = array(
-                    'id'    => $project['id'],
-                    'name'  => $project['name'],
-                    'tasks' => $tasksOfProject
+                    'id'       => $project['id'],
+                    'name'     => $project['name'],
+                    'isActive' => $project['active'] == 'true',
+                    'tasks'    => $tasksOfProject
                 );
             }
 
